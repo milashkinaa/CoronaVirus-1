@@ -1,3 +1,5 @@
+# Lera lox
+
 import pygame
 
 import copy
