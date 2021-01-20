@@ -5,11 +5,6 @@ from Constants import *
 
 
 class CoronaVirus(Character):
-    images = [pygame.image.load("бактерия первая.png").convert(), \
-              pygame.image.load("бактерия вторая.png").convert(), \
-              pygame.image.load("бактерия третья.png").convert()]
-    for i in range(len(images)):
-        images[i].set_colorkey((0, 0, 0))
 
     def __init__(self):
         super().__init__()
@@ -20,30 +15,35 @@ class CoronaVirus(Character):
 
     def reset(self):
         #  восстанавливает положение, скорость и тд
-        self.surface = CoronaVirus.images[0]
+        self.images = [pygame.image.load("бактерия первая.png").convert(), \
+                       pygame.image.load("бактерия вторая.png").convert(), \
+                       pygame.image.load("бактерия третья.png").convert()]
+        self.surface = self.images[0]
         self.isFirstPic = True
         self.image = 0
         self.rect = self.surface.get_rect()
+        # размещаем на холсте, не двигается
         self.rect.left = 315
         self.rect.top = 315
         self.direction = 0
         self.moveUp = self.moveLeft = self.moveDown = self.moveRight = False
+        #  картинки
 
     def getSurface(self):
-        #  задаем картинку
+        #  задаем карусель картинок
         self.image += 1
         if self.image == 3:
             self.isFirstPic = not self.isFirstPic
             self.image = 0
 
         if self.direction == 0:
-            self.surface = CoronaVirus.images[self.isFirstPic]
+            self.surface = self.images[self.isFirstPic]
         elif self.direction == 1:
-            self.surface = pygame.transform.rotate(CoronaVirus.images[self.isFirstPic], 90)
+            self.surface = pygame.transform.rotate(self.images[self.isFirstPic], 90)
         elif self.direction == 2:
-            self.surface = pygame.transform.rotate(CoronaVirus.images[self.isFirstPic], 180)
+            self.surface = pygame.transform.rotate(self.images[self.isFirstPic], 180)
         elif self.direction == 3:
-            self.surface = pygame.transform.rotate(CoronaVirus.images[self.isFirstPic], 270)
+            self.surface = pygame.transform.rotate(self.images[self.isFirstPic], 270)
 
     def move_c(self, walls):
         #  проверка возможности движения и движение
@@ -83,7 +83,7 @@ class CoronaVirus(Character):
         surface = pygame.font.SysFont(None, 48).render("Lives:          ", True, YELLOW)
         x = 110
         for i in range(self.lives):
-            surface.blit(CoronaVirus.images[2], (x, 5))
+            surface.blit(self.images[2], (x, 5))
             x += 25
         return surface
 
