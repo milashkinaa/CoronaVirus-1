@@ -10,11 +10,8 @@ from Constants import *
 wSurface = pygame.display.set_mode(WINDOWSIZE, 0, 32)
 pygame.display.set_caption("CoronaVirus eats people!!")
 
-import random, copy
-
-from Character import Character
 from CoronaVirus import CoronaVirus
-from Bacteria import Bacteria
+from AntiBody import AntiBody
 from Walls import Walls
 from Dots import Dots
 from Sound import Sound
@@ -22,10 +19,10 @@ from Sound import Sound
 # Create game objects
 background = pygame.image.load("bg.png").convert()
 corona = CoronaVirus()
-bacteria = [Bacteria()]
+bacteria = [AntiBody()]
 walls = Walls.createList(Walls())
-pellets_small = Dots.createListSmall(Dots())
-pellets_large = Dots.createListLarge(Dots())
+small_dots = Dots.createListSmall(Dots())
+large_dots = Dots.createListLarge(Dots())
 clock = pygame.time.Clock()
 pygame.mixer.music.load("bg_music.mp3")
 pygame.mixer.music.set_volume(0.1)
@@ -36,9 +33,9 @@ wSurface.fill((0, 0, 0))
 wSurface.blit(background, (100, 0))
 wSurface.blit(corona.getScoreSurface(), (10, 10))
 wSurface.blit(corona.getLivesSurface(), (WINDOWSIZE[0] - 200, 10))
-for p in pellets_small:
+for p in small_dots:
     wSurface.blit(Dots.images[0], (p[0] + Dots.shifts[0][0], p[1] + Dots.shifts[0][1]))
-for p in pellets_large:
+for p in large_dots:
     wSurface.blit(Dots.images[1], (p[0] + Dots.shifts[1][0], p[1] + Dots.shifts[1][1]))
 for g in bacteria:
     wSurface.blit(g.surface, g.rect)
@@ -48,14 +45,13 @@ while True:
     if not pygame.mixer.get_busy():
         break
 
-# Вся игра
+# Основной цикл игры
 keepGoing_game = True
 while keepGoing_game:
     # Один раунд
     keepGoing_round = True
     pygame.mixer.music.play(-1, 0.0)
     while keepGoing_round:
-        clock.tick(FPS)
 
         # Event handling
         for event in pygame.event.get():
@@ -96,10 +92,10 @@ while keepGoing_game:
         corona.getSurface()
 
         # Check if pacman has eaten any pellets and delete them
-        Dots.check(Dots(), pellets_small, pellets_large, corona, bacteria)
+        Dots.check(Dots(), small_dots, large_dots, corona, bacteria)
 
         # Add a new ghost if necessary
-        Bacteria.add(Bacteria(), bacteria)
+        AntiBody.add(AntiBody(), bacteria)
 
         # Check if blue ghosts must return to normal
         for g in bacteria:
@@ -115,9 +111,9 @@ while keepGoing_game:
         wSurface.blit(background, (100, 0))
         wSurface.blit(corona.getScoreSurface(), (10, 10))
         wSurface.blit(corona.getLivesSurface(), (WINDOWSIZE[0] - 200, 10))
-        for p in pellets_small:
+        for p in small_dots:
             wSurface.blit(Dots.images[0], (p[0] + Dots.shifts[0][0], p[1] + Dots.shifts[0][1]))
-        for p in pellets_large:
+        for p in large_dots:
             wSurface.blit(Dots.images[1], (p[0] + Dots.shifts[1][0], p[1] + Dots.shifts[1][1]))
         for g in bacteria:
             wSurface.blit(g.surface, g.rect)
@@ -141,11 +137,11 @@ while keepGoing_game:
                     Sound.channel.play(Sound.eatGhost)
 
 
-        # Check if pacman has eaten all the pellets
+        # проверка съедены ли все точки
         else:
-            if len(pellets_small) == 0 and len(pellets_large) == 0:
+            if len(small_dots) == 0 and len(large_dots) == 0:
                 keepGoing_game = keepGoing_round = False
-
+        clock.tick(FPS)
     # Reset round
     pygame.mixer.music.stop()
     corona.reset()
@@ -163,7 +159,7 @@ if corona.lives == 0:  # Player loses
     Sound.channel.play(Sound.lose)
     surface_temp = corona.getLosingSurface()
 
-elif len(pellets_small) == 0 and len(pellets_large) == 0:  # Player wins
+elif len(small_dots) == 0 and len(large_dots) == 0:  # Player wins
     Sound.channel.play(Sound.win)
     surface_temp = corona.getWinningSurface()
 

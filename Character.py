@@ -8,20 +8,18 @@ class Character():
         self.speed = None
 
     def canMove(self, direction, walls):
-        '''in - (self, direction, list of walls)
-        Determines if character can move without colliding with any of the walls.
-        out - bool'''
+        #  проверка можно ли двигаться без столкновения со стенами
         if direction == 0:
-            rectTest = self.rect.move((0, -self.speed))
+            moved_rect = self.rect.move((0, -self.speed))
         elif direction == 1:
-            rectTest = self.rect.move((-self.speed, 0))
+            moved_rect = self.rect.move((-self.speed, 0))
         elif direction == 2:
-            rectTest = self.rect.move((0, self.speed))
+            moved_rect = self.rect.move((0, self.speed))
         elif direction == 3:
-            rectTest = self.rect.move((self.speed, 0))
+            moved_rect = self.rect.move((self.speed, 0))
 
         for wall in walls:
-            if wall.colliderect(rectTest):#  проверяет не накладываются ли друг на друга стена и персонаж
+            if wall.colliderect(moved_rect):#  проверяет не накладываются ли друг на друга стена и персонаж
                 return False
         return True
 
